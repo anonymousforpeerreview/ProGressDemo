@@ -1,0 +1,181 @@
+@use "sass:math";
+@use "sass:string";
+
+.dotted-box {
+    border: 2px dotted #888; /* Set the border style to dotted and color to black */
+    border-radius: 20px; /* Set border radius for rounded corners */
+    padding: 10px; /* Add some padding to the content inside the box */
+}
+
+.center-stuff {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+}
+
+.btn {
+    background-color: #cde;
+    color: black;
+    padding: 8px;
+    margin: 10px;
+    font-size: 16px;
+    /* border: 2px solid black; */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #def;
+}
+
+.vis midi-player {
+    display: block;
+    width: inherit;
+    margin: 4px;
+    margin-bottom: 0;
+}
+
+.vis midi-player::part(control-panel) {
+    /* background: #252a34; */
+    border: 2px solid #000;
+    border-radius: 10px 10px 0 0;
+}
+
+.vis midi-player::part(play-button) {
+    color: #222;
+    border: 2px solid currentColor;
+    background-color: #ddd;
+    border-radius: 20px;
+    transition: all 0.2s;
+    content: 'hello';
+}
+
+.vis midi-player::part(play-button):hover {
+    color: #000;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+midi-player::part(time) {
+    font-family: monospace;
+}
+
+/* Custom visualizer style */
+.vis midi-visualizer .piano-roll-visualizer {
+    /* background: #252a34; */
+    border: 2px solid black;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    margin: 4px;
+    margin-top: 0;
+    overflow: auto;
+}
+
+.alone midi-visualizer .piano-roll-visualizer {
+    /* background: #252a34; */
+    border: 2px solid black;
+    border-radius: 10px 10px 10px 10px;
+    margin: 5px;
+    overflow: auto;
+}
+
+midi-visualizer svg rect.note {
+    opacity: 0.6;
+    stroke-width: 2;
+}
+
+midi-visualizer svg rect.note[data-instrument="0"] {
+    fill: #e03c34;
+}
+
+midi-visualizer svg rect.note[data-instrument="1"] {
+    fill: #1c71d8;
+}
+
+.acc midi-visualizer svg rect.note[data-instrument="0"] {
+    fill: #1c71d8;
+}
+
+.form midi-visualizer svg rect.note[data-instrument="1"] {
+    fill: #aaa;
+}
+
+$l: #aaa;
+$t: transparent;
+$i: #efefef;
+$A: #faf5eb;
+$B: #faedf7;
+$b: #ebeffa;
+$o: #efefef;
+
+.legend {
+    border: 2px dotted #888; /* Set the border style to dotted and color to black */
+    border-radius: 20px; /* Set border radius for rounded corners */
+    padding-bottom: 0px;
+    padding-top: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    // height: 100vh;
+    margin-bottom: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.color-box {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border: 1px solid #000; /* Black border for better visibility */
+}
+
+/* @mixin phrase($phs...) { */
+/*     $cur: 0; */
+/*     @for $k from 0 to math.div(length($phs), 2) { */
+/*         $color: nth($phs, $k * 2 + 1); */
+/*         $len: nth($phs, $k * 2 + 2); */
+
+/*         @debug $color, $len; */
+/*         $background: linear-gradient(90deg, $color $cur*80px+1px ($cur+$len)*80px-1px, $l ($cur+$len)*80px-1px ($cur+$len)*80px+1px); */
+/*         $cur: $cur + $len; */
+/*     } */
+/* } */
+
+/* #fig2 midi-visualizer .piano-roll-visualizer svg{   */
+/*     @include phrase($A, 4, $B, 1); */
+/* } */
+
+midi-visualizer .piano-roll-visualizer svg {
+    background: linear-gradient(90deg, $l 1px, $t 1px 20px, #aaaaaa55 21px, $t 21px 40px, #aaaaaa55 41px, $t 41px 60px, #aaaaaa55 61px, $t 61px) left/80px repeat;
+}
+
+midi-visualizer svg rect.note[data-is-drum="true"] {
+    fill: #888;
+    /* stroke: #888; */
+}
+
+midi-visualizer svg rect.note.active {
+    opacity: 0.9;
+    stroke: #000;
+}
+
+.type1 midi-visualizer .piano-roll-visualizer svg {
+    background: linear-gradient(90deg, #aaaaaa77 1px, $t 1px 20px, #aaaaaa55 21px, $t 21px 40px, #aaaaaa55 41px, $t 41px 60px, #aaaaaa55 61px, $t 61px) left/80px repeat, linear-gradient(90deg, $i 1px 319px, $l 319px 321px, $A 321px 639px, $l 639px 641px, $A 641px 959px, $l 959px 961px, $B 961px 1599px, $l 1599px 1601px, $b 1601px 1919px, $l 1919px 1921px, $A 1921px 2239px, $l 2239px 2241px, $B 2241px 2879px, $l 2879px 2881px, $o 2881px 3199px, $l 3199px 3201px);
+}
+
+.type2 midi-visualizer .piano-roll-visualizer svg {
+    background: linear-gradient(90deg, #aaaaaa77 1px, $t 1px 20px, #aaaaaa55 21px, $t 21px 40px, #aaaaaa55 41px, $t 41px 60px, #aaaaaa55 61px, $t 61px) left/80px repeat, linear-gradient(90deg, $A 1px 639px, $l 639px 641px, $B 641px 1279px, $l 1279px 1281px, $A 1281px 1919px, $l 1919px 1921px, $B 1921px 2559px, $l 2559px 2561px, $B 2561px 3199px, $l 3199px 3201px);
+}
+
+.type3 midi-visualizer .piano-roll-visualizer svg {
+    background: linear-gradient(90deg, #aaaaaa77 1px, $t 1px 20px, #aaaaaa55 21px, $t 21px 40px, #aaaaaa55 41px, $t 41px 60px, #aaaaaa55 61px, $t 61px) left/80px repeat, linear-gradient(90deg, $i 1px 319px, $l 319px 321px, $A 321px 639px, $l 639px 641px, $B 641px 959px, $l 959px 961px, $b 961px 1599px, $l 1599px 1601px, $A 1601px 1919px, $l 1919px 1921px, $B 1921px 2239px, $l 2239px 2241px, $o 2241px 2559px, $l 2559px 2561px);
+}
