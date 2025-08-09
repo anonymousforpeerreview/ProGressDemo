@@ -6,17 +6,28 @@ title: null
 <head>
     <link rel="stylesheet" href="styles.css">
     <style>
+    #players {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
     .audio-player {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      flex-direction: column;
       background: linear-gradient(135deg, #4b6cb7, #182848);
       padding: 12px 16px;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       color: white;
-      width: 320px;
-      margin-bottom: 15px;
+    }
+
+    .audio-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
     }
 
     .audio-player button {
@@ -29,10 +40,23 @@ title: null
       font-size: 18px;
       cursor: pointer;
       transition: background 0.3s ease;
+      flex-shrink: 0;
     }
 
     .audio-player button:hover {
       background: #ff5722;
+    }
+
+    .audio-progress-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .audio-time {
+      font-size: 0.8em;
+      width: 38px;
+      text-align: center;
     }
 
     .audio-progress {
@@ -65,7 +89,7 @@ This is the demo page of the paper: ProGress: Structured Music Generation via Gr
 
 # Abstract
 
-Artificial Intelligence (AI) for music generation is undergoing rapid developments, with recent symbolic models leveraging sophisticated deep learning and diffusion model algorithms. However, one drawback with existing models is that they lack structural cohesion, particularly on harmonic-melodic structure. Furthermore, such existing models are largely “black-box” in nature and are not musically interpretable. This paper addresses these limitations via a novel generative music framework that incorporates concepts of Schenkerian analysis (SchA) in concert with a diffusion modeling framework. This framework, which we call ProGress(Prolongation-enhanced DiGress), adapts state-of-the-art deep models for discrete diffusion (in particular, the DiGress model of Vignac et al., 2023) for interpretable and structured music generation. Concretely, our contributions include 1) novel adaptations of the DiGress model for music generation, 2) a novel SchA-inspired phrase fusion methodology, and 3) a framework allowing users to control various aspects of the generation process to create coherent musical compositions. Results from human experiments suggest superior performance to existing state-of-the-art methods.
+
 
 # Example
 
@@ -85,24 +109,54 @@ const audioFiles = [
   "https://duke.yul1.qualtrics.com/ControlPanel/File.php?F=F_cjZVzIEjhiYsMy5"
 ];
 
+function formatTime(seconds) {
+  if (isNaN(seconds)) return "0:00";
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
 function createPlayer(url) {
   const container = document.createElement("div");
   container.className = "audio-player";
 
+  const controls = document.createElement("div");
+  controls.className = "audio-controls";
+
   const btn = document.createElement("button");
   btn.textContent = "▶";
+
+  const audio = document.createElement("audio");
+  audio.src = url;
+
+  controls.appendChild(btn);
+
+  const progressContainer = document.createElement("div");
+  progressContainer.className = "audio-progress-container";
+
+  const currentTimeLabel = document.createElement("div");
+  currentTimeLabel.className = "audio-time";
+  currentTimeLabel.textContent = "0:00";
 
   const progressWrapper = document.createElement("div");
   progressWrapper.className = "audio-progress";
   const progressBar = document.createElement("div");
   progressWrapper.appendChild(progressBar);
 
-  const audio = document.createElement("audio");
-  audio.src = url;
+  const durationLabel = document.createElement("div");
+  durationLabel.className = "audio-time";
+  durationLabel.textContent = "0:00";
+
+  progressContainer.appendChild(currentTimeLabel);
+  progressContainer.appendChild(progressWrapper);
+  progressContainer.appendChild(durationLabel);
+
+  container.appendChild(controls);
+  container.appendChild(progressContainer);
+  controls.appendChild(progressWrapper);
 
   btn.addEventListener("click", () => {
     if (audio.paused) {
-      // Pause others
       document.querySelectorAll("audio").forEach(a => {
         if (a !== audio) {
           a.pause();
@@ -117,19 +171,22 @@ function createPlayer(url) {
     }
   });
 
+  audio.addEventListener("loadedmetadata", () => {
+    durationLabel.textContent = formatTime(audio.duration);
+  });
+
   audio.addEventListener("timeupdate", () => {
+    currentTimeLabel.textContent = formatTime(audio.currentTime);
     progressBar.style.width = (audio.currentTime / audio.duration) * 100 + "%";
   });
 
   audio.addEventListener("ended", () => {
     btn.textContent = "▶";
     progressBar.style.width = "0%";
+    currentTimeLabel.textContent = "0:00";
   });
 
-  container.appendChild(btn);
-  container.appendChild(progressWrapper);
   container.appendChild(audio);
-
   document.getElementById("players").appendChild(container);
 }
 
